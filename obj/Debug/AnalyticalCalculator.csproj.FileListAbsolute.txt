@@ -1,0 +1,17 @@
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\AnalyticalCalculator.exe.config
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\AnalyticalCalculator.exe
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\AnalyticalCalculator.pdb
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\ExcelDataReader.DataSet.dll
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\ExcelDataReader.dll
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\ExcelDataReader.pdb
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\ExcelDataReader.xml
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\ExcelDataReader.DataSet.pdb
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\ExcelDataReader.DataSet.xml
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.csproj.AssemblyReference.cache
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.Form1.resources
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.Properties.Resources.resources
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.csproj.GenerateResource.cache
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.csproj.CoreCompileInputs.cache
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.csproj.CopyComplete
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.exe
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.pdb
