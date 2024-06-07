@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ExcelDataReader;
 using OfficeOpenXml;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace AnalyticalCalculator
 {
@@ -230,11 +231,183 @@ namespace AnalyticalCalculator
                 }
             }
 
-            // throw new Exception($"Показатель {indicatorName} не найден в файле {filePath}");
             // Если показатель не найден, вернуть список из 5 нулей
             return new List<double> { 0, 0, 0, 0, 0 };
+        }  
+
+        private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateSummaryFiles();
+            PlotCharts(); // Построение графиков после создания сводных файлов
         }
 
+        private void PlotCharts()
+        {
+            string summaryFolder = Path.Combine(allFolder, "SummaryReports");
+
+            foreach (string company in toolStripComboBox1.Items)
+            {
+                string summaryFilePath = Path.Combine(summaryFolder, $"{company}.xlsx");
+                if (File.Exists(summaryFilePath))
+                {
+                    var indicators = LoadIndicatorsFromExcel(summaryFilePath);
+
+                    chart1.Series.Clear();
+                    chart1.ChartAreas.Clear();
+                    chart1.ChartAreas.Add(new ChartArea("MainArea"));
+
+                    foreach (var indicator in indicators)
+                    {
+                        var series = new Series(indicator.Key)
+                        {
+                            ChartType = SeriesChartType.Line
+                        };
+
+                        for (int i = 0; i < indicator.Value.Count; i++)
+                        {
+                            series.Points.AddXY(2019 + i, indicator.Value[i]);
+                        }
+
+                        chart1.Series.Add(series);
+                    }
+                }
+            }
+        }
+
+        private Dictionary<string, List<double>> LoadIndicatorsFromExcel(string filePath)
+        {
+            var indicators = new Dictionary<string, List<double>>();
+
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                var worksheet = package.Workbook.Worksheets["Summary"];
+                var rowCount = worksheet.Dimension.Rows;
+                var colCount = worksheet.Dimension.Columns;
+
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    string indicatorName = worksheet.Cells[row, 1].Text;
+                    List<double> values = new List<double>();
+
+                    for (int col = 2; col <= colCount; col++)
+                    {
+                        values.Add(Convert.ToDouble(worksheet.Cells[row, col].Text));
+                    }
+
+                    indicators[indicatorName] = values;
+                }
+            }
+
+            return indicators;
+        }
+
+        private Dictionary<string, List<double>> CalculateFinancialMetrics(Dictionary<string, List<double>> indicators)
+        {
+            var metrics = new Dictionary<string, List<double>>();
+
+            // Предположим, что все показатели имеют одинаковое количество значений (5 лет)
+            int years = indicators.First().Value.Count;
+
+            for (int i = 0; i < years; i++)
+            {
+                double totalRevenue = indicators["Total Revenue"][i];
+                double netIncome = indicators["Net Income"][i];
+                double grossProfit = indicators["Gross Profit"][i];
+                double operatingIncome = indicators["Operating Expenses"][i];
+                double depreciationAmortization = indicators["Depreciation, Amortization and Depletion"][i];
+                double operatingCashFlow = indicators["Operating Cash Flow"][i];
+                double capitalExpenditures = indicators["Capital Expenditures, CapEx"][i];
+                double totalAssets = indicators["Total Assets"][i];
+                double totalEquity = indicators["Total Equity"][i];
+                double totalCurrentAssets = indicators["Total Current Assets"][i];
+                double totalCurrentLiabilities = indicators["Total Current Liabilities"][i];
+                double inventories = indicators["Inventories"][i];
+                double shortTermDebt = indicators["Short-term Debt"][i];
+                double longTermDebt = indicators["Long-term Debt"][i];
+                double cashEquivalents = indicators["Cash, Cash Equivalents and Short Term Investments"][i];
+
+                // Маржинальность (Gross Margin)
+                double grossMargin = totalRevenue != 0 ? grossProfit / totalRevenue : 0;
+
+                // EBITDA
+                double ebitda = operatingIncome + depreciationAmortization;
+
+                // Free Cash Flow
+                double freeCashFlow = operatingCashFlow - capitalExpenditures;
+
+                // ROA
+                double roa = totalAssets != 0 ? netIncome / totalAssets : 0;
+
+                // ROE
+                double roe = totalEquity != 0 ? netIncome / totalEquity : 0;
+
+                // ROS
+                double ros = totalRevenue != 0 ? netIncome / totalRevenue : 0;
+
+                // Current Ratio
+                double currentRatio = totalCurrentLiabilities != 0 ? totalCurrentAssets / totalCurrentLiabilities : 0;
+
+                // Quick Ratio
+                double quickRatio = totalCurrentLiabilities != 0 ? (totalCurrentAssets - inventories) / totalCurrentLiabilities : 0;
+
+                // Debt-to-Equity Ratio
+                double debtToEquity = totalEquity != 0 ? (shortTermDebt + longTermDebt) / totalEquity : 0;
+
+                // Net Debt
+                double netDebt = (shortTermDebt + longTermDebt) - cashEquivalents;
+
+                // Enterprise Value
+                double enterpriseValue =  totalEquity + netDebt;
+
+                // Book Value
+                double bookValue = totalCurrentAssets - totalCurrentLiabilities;
+
+                // EV/EBITDA
+                double evEbitda = ebitda != 0 ? enterpriseValue / ebitda : 0;
+
+                // EV/S
+                double evS = totalRevenue != 0 ? enterpriseValue / totalRevenue : 0;
+
+                // P/E
+                double pE = netIncome != 0 ? totalEquity / netIncome : 0;
+
+                // P/S
+                double pS = totalRevenue != 0 ? totalEquity / totalRevenue : 0;                              
+
+                // P/BV
+                double pBV = bookValue != 0 ? totalEquity / bookValue : 0;
+
+                // Добавление рассчитанных показателей в словарь
+                AddMetric(metrics, "Gross Margin", grossMargin);
+                AddMetric(metrics, "EBITDA", ebitda);
+                AddMetric(metrics, "Free Cash Flow", freeCashFlow);
+                AddMetric(metrics, "ROA", roa);
+                AddMetric(metrics, "ROE", roe);
+                AddMetric(metrics, "ROS", ros);
+                AddMetric(metrics, "Current Ratio", currentRatio);
+                AddMetric(metrics, "Quick Ratio", quickRatio);
+                AddMetric(metrics, "Debt-to-Equity Ratio", debtToEquity);
+                AddMetric(metrics, "Net Debt", netDebt);
+                AddMetric(metrics, "Enterprise Value", enterpriseValue);
+                AddMetric(metrics, "Book Value", bookValue);
+                AddMetric(metrics, "EV/EBITDA", evEbitda);
+                AddMetric(metrics, "EV/S", evS);
+                AddMetric(metrics, "P/E", pE);
+                AddMetric(metrics, "P/S", pS);
+                AddMetric(metrics, "P/BV", pBV);
+            }
+
+            return metrics;
+        }
+
+        private void AddMetric(Dictionary<string, List<double>> metrics, string metricName, double value)
+        {
+            if (!metrics.ContainsKey(metricName))
+            {
+                metrics[metricName] = new List<double>();
+            }
+            metrics[metricName].Add(value);
+        }
 
         private void CreateSummaryFiles()
         {
@@ -251,13 +424,14 @@ namespace AnalyticalCalculator
 
                 if (indicators != null)
                 {
+                    var metrics = CalculateFinancialMetrics(indicators);
                     string summaryFilePath = Path.Combine(summaryFolder, $"{company}.xlsx");
-                    SaveToExcel(summaryFilePath, indicators);
+                    SaveToExcel(summaryFilePath, indicators, metrics);
                 }
             }
         }
 
-        private void SaveToExcel(string filePath, Dictionary<string, List<double>> indicators)
+        private void SaveToExcel(string filePath, Dictionary<string, List<double>> indicators, Dictionary<string, List<double>> metrics)
         {
             using (var package = new ExcelPackage())
             {
@@ -281,13 +455,18 @@ namespace AnalyticalCalculator
                     row++;
                 }
 
+                foreach (var metric in metrics)
+                {
+                    worksheet.Cells[row, 1].Value = metric.Key;
+                    for (int i = 0; i < metric.Value.Count; i++)
+                    {
+                        worksheet.Cells[row, i + 2].Value = metric.Value[i];
+                    }
+                    row++;
+                }
+
                 package.SaveAs(new FileInfo(filePath));
             }
-        }
-
-        private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CreateSummaryFiles();
         }
     }
 }
