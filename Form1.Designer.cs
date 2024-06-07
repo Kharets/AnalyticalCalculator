@@ -37,12 +37,13 @@ namespace AnalyticalCalculator
             this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.создатьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -62,7 +63,8 @@ namespace AnalyticalCalculator
             // файлToolStripMenuItem
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.создатьПапкуToolStripMenuItem});
+            this.создатьПапкуToolStripMenuItem,
+            this.создатьToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.файлToolStripMenuItem.Text = "Файл";
@@ -70,7 +72,7 @@ namespace AnalyticalCalculator
             // создатьПапкуToolStripMenuItem
             // 
             this.создатьПапкуToolStripMenuItem.Name = "создатьПапкуToolStripMenuItem";
-            this.создатьПапкуToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.создатьПапкуToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.создатьПапкуToolStripMenuItem.Text = "Обновить";
             // 
             // toolStrip1
@@ -114,6 +116,12 @@ namespace AnalyticalCalculator
             this.toolStripComboBox2.Size = new System.Drawing.Size(121, 25);
             this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox2_SelectedIndexChanged);
             this.toolStripComboBox2.Click += new System.EventHandler(this.toolStripComboBox2_Click);
+            // 
+            // toolStripLabel3
+            // 
+            this.toolStripLabel3.Name = "toolStripLabel3";
+            this.toolStripLabel3.Size = new System.Drawing.Size(45, 22);
+            this.toolStripLabel3.Text = "Поиск:";
             // 
             // openFileDialog1
             // 
@@ -173,11 +181,12 @@ namespace AnalyticalCalculator
             this.dataGridView1.Size = new System.Drawing.Size(800, 401);
             this.dataGridView1.TabIndex = 2;
             // 
-            // toolStripLabel3
+            // создатьToolStripMenuItem
             // 
-            this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(45, 22);
-            this.toolStripLabel3.Text = "Поиск:";
+            this.создатьToolStripMenuItem.Name = "создатьToolStripMenuItem";
+            this.создатьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.создатьToolStripMenuItem.Text = "Создать";
+            this.создатьToolStripMenuItem.Click += new System.EventHandler(this.создатьToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -221,6 +230,7 @@ namespace AnalyticalCalculator
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+        private System.Windows.Forms.ToolStripMenuItem создатьToolStripMenuItem;
     }
 }
 
