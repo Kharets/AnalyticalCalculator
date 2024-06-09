@@ -18,8 +18,11 @@ namespace AnalyticalCalculator
 
         private DataTableCollection tableCollection = null;
 
+        //public static Form1 SelfRef { get; set; }        
+
         public Form1()
         {
+            //SelfRef = this;
             InitializeComponent();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Установка контекста лицензии
         }
@@ -63,30 +66,34 @@ namespace AnalyticalCalculator
 
         private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string selectedFolder = toolStripComboBox1.SelectedItem.ToString();
-            string selectedFile = toolStripComboBox2.SelectedItem.ToString();
-            string path = Path.Combine(mainFolder, selectedFolder, selectedFile);
-
-            if (File.Exists(path))
+            try
             {
-                FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
-                IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
-                DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
+                string selectedFolder = toolStripComboBox1.SelectedItem.ToString();
+                string selectedFile = toolStripComboBox2.SelectedItem.ToString();
+                string path = Path.Combine(mainFolder, selectedFolder, selectedFile);
+
+                if (File.Exists(path))
                 {
-                    ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
+                    FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+                    IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+                    DataSet db = reader.AsDataSet(new ExcelDataSetConfiguration()
                     {
-                        //UseHeaderRow = true
-                    }
-                });
+                        ConfigureDataTable = (x) => new ExcelDataTableConfiguration()
+                        {
+                            //UseHeaderRow = true
+                        }
+                    });
 
-                tableCollection = db.Tables;
-                DataTable table = tableCollection[0];
-                dataGridView1.DataSource = table;
+                    tableCollection = db.Tables;
+                    DataTable table = tableCollection[0];
+                    dataGridView1.DataSource = table;
+                }
+                else
+                {
+                    MessageBox.Show($"Папка не найдена по пути: {path}");
+                }
             }
-            else
-            {
-                MessageBox.Show($"Папка не найдена по пути: {path}");
-            }
+            catch (Exception) {  }
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -231,6 +238,8 @@ namespace AnalyticalCalculator
                 }
             }
 
+            //MessageBox.Show($"Показатель {indicatorName} не найден в файле {filePath}");
+
             // Если показатель не найден, вернуть список из 5 нулей
             return new List<double> { 0, 0, 0, 0, 0 };
         }  
@@ -238,67 +247,6 @@ namespace AnalyticalCalculator
         private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CreateSummaryFiles();
-            PlotCharts(); // Построение графиков после создания сводных файлов
-        }
-
-        private void PlotCharts()
-        {
-            string summaryFolder = Path.Combine(allFolder, "SummaryReports");
-
-            foreach (string company in toolStripComboBox1.Items)
-            {
-                string summaryFilePath = Path.Combine(summaryFolder, $"{company}.xlsx");
-                if (File.Exists(summaryFilePath))
-                {
-                    var indicators = LoadIndicatorsFromExcel(summaryFilePath);
-
-                    chart1.Series.Clear();
-                    chart1.ChartAreas.Clear();
-                    chart1.ChartAreas.Add(new ChartArea("MainArea"));
-
-                    foreach (var indicator in indicators)
-                    {
-                        var series = new Series(indicator.Key)
-                        {
-                            ChartType = SeriesChartType.Line
-                        };
-
-                        for (int i = 0; i < indicator.Value.Count; i++)
-                        {
-                            series.Points.AddXY(2019 + i, indicator.Value[i]);
-                        }
-
-                        chart1.Series.Add(series);
-                    }
-                }
-            }
-        }
-
-        private Dictionary<string, List<double>> LoadIndicatorsFromExcel(string filePath)
-        {
-            var indicators = new Dictionary<string, List<double>>();
-
-            using (var package = new ExcelPackage(new FileInfo(filePath)))
-            {
-                var worksheet = package.Workbook.Worksheets["Summary"];
-                var rowCount = worksheet.Dimension.Rows;
-                var colCount = worksheet.Dimension.Columns;
-
-                for (int row = 2; row <= rowCount; row++)
-                {
-                    string indicatorName = worksheet.Cells[row, 1].Text;
-                    List<double> values = new List<double>();
-
-                    for (int col = 2; col <= colCount; col++)
-                    {
-                        values.Add(Convert.ToDouble(worksheet.Cells[row, col].Text));
-                    }
-
-                    indicators[indicatorName] = values;
-                }
-            }
-
-            return indicators;
         }
 
         private Dictionary<string, List<double>> CalculateFinancialMetrics(Dictionary<string, List<double>> indicators)
@@ -411,6 +359,8 @@ namespace AnalyticalCalculator
 
         private void CreateSummaryFiles()
         {
+            toolStripComboBox1_Click(this, EventArgs.Empty);
+
             string summaryFolder = Path.Combine(allFolder, "SummaryReports");
             if (!Directory.Exists(summaryFolder))
             {
@@ -466,6 +416,74 @@ namespace AnalyticalCalculator
                 }
 
                 package.SaveAs(new FileInfo(filePath));
+            }
+        }
+
+        private Dictionary<string, List<double>> LoadIndicatorsFromExcel(string filePath)
+        {
+            var indicators = new Dictionary<string, List<double>>();
+
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                var worksheet = package.Workbook.Worksheets["Summary"];
+                var rowCount = worksheet.Dimension.Rows;
+                var colCount = worksheet.Dimension.Columns;
+
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    string indicatorName = worksheet.Cells[row, 1].Text;
+                    List<double> values = new List<double>();
+
+                    for (int col = 2; col <= colCount; col++)
+                    {
+                        if (double.TryParse(worksheet.Cells[row, col].Text, out double value))
+                        {
+                            values.Add(value);
+                        }
+                        else
+                        {
+                            values.Add(0); // Если значение не может быть преобразовано в double, записать 0
+                        }
+                    }
+
+                    indicators[indicatorName] = values;
+                }
+            }
+
+            return indicators;
+        }
+
+        // Метод для извлечения данных метрик
+        public Dictionary<string, Dictionary<string, List<double>>> ExtractAllCompanyData()
+        {
+            Dictionary<string, Dictionary<string, List<double>>> allData = new Dictionary<string, Dictionary<string, List<double>>>();
+
+            string summaryFolder = Path.Combine(allFolder, "SummaryReports");
+            if (!Directory.Exists(summaryFolder))
+            {
+                MessageBox.Show($"Папка SummaryReports не найдена по пути: {summaryFolder}");
+                return allData;
+            }
+
+            foreach (string file in Directory.GetFiles(summaryFolder, "*.xlsx"))
+            {
+                string companyName = Path.GetFileNameWithoutExtension(file);
+                var indicators = LoadIndicatorsFromExcel(file);
+                allData[companyName] = indicators;
+            }
+
+            return allData;
+        }
+
+        private void графикиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateSummaryFiles();            
+
+            var allData = ExtractAllCompanyData();
+            if (allData != null)
+            {
+                Form2 form2 = new Form2(allData);
+                form2.Show();
             }
         }
     }

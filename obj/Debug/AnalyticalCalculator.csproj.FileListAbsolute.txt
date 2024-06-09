@@ -60,3 +60,4 @@ D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\System.Text.En
 D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\System.Text.Json.xml
 D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\System.Threading.Tasks.Extensions.xml
 D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\bin\Debug\System.ValueTuple.xml
+D:\CODE\C++++\AnalyticalCalculator\AnalyticalCalculator\obj\Debug\AnalyticalCalculator.Form2.resources
