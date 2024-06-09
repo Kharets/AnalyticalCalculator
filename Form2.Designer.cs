@@ -82,8 +82,8 @@ namespace AnalyticalCalculator
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(70, 22);
-            this.toolStripLabel1.Text = "Индикатор:";
+            this.toolStripLabel1.Size = new System.Drawing.Size(73, 22);
+            this.toolStripLabel1.Text = "Показатель:";
             // 
             // toolStripComboBox1
             // 
