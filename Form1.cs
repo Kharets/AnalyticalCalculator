@@ -261,7 +261,7 @@ namespace AnalyticalCalculator
                 double totalRevenue = indicators["Total Revenue"][i];
                 double netIncome = indicators["Net Income"][i];
                 double grossProfit = indicators["Gross Profit"][i];
-                double operatingIncome = indicators["Operating Expenses"][i];
+                double operatingExpenses = indicators["Operating Expenses"][i];
                 double depreciationAmortization = indicators["Depreciation, Amortization and Depletion"][i];
                 double operatingCashFlow = indicators["Operating Cash Flow"][i];
                 double capitalExpenditures = indicators["Capital Expenditures, CapEx"][i];
@@ -278,7 +278,8 @@ namespace AnalyticalCalculator
                 double grossMargin = totalRevenue != 0 ? grossProfit / totalRevenue : 0;
 
                 // EBITDA
-                double ebitda = operatingIncome + depreciationAmortization;
+                //double ebitda = operatingIncome + depreciationAmortization;
+                double ebitda = grossProfit + operatingExpenses + depreciationAmortization;
 
                 // Free Cash Flow
                 double freeCashFlow = operatingCashFlow - capitalExpenditures;
